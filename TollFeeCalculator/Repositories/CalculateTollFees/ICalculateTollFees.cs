@@ -1,13 +1,9 @@
 ﻿using System;
 
-namespace TollFeeCalculator
+namespace TollFeeCalculator.Repositories.CalculateTollFees
 {
-    public interface ITollFees
+    public interface ICalculateTollFees
     {
-        void RunTextFile(String inputFile);
-        DateTime[] PrepareData(string inputFile);
-        string[] SplitInData(string indata);
-        DateTime[] ParseDates(string[] dateStrings);
         int TotalFeeCost(DateTime[] dates);
         int TollFee(DateTime[] dates);
         int CalculateTimeBetweenTollStops(DateTime date, DateTime startingInterval);

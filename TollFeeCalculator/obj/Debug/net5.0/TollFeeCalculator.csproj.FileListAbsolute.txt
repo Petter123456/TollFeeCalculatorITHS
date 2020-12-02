@@ -10,9 +10,9 @@ C:\Users\pette\source\repos\cleancodeiths\Lab2\TollFeeCalculator\TollFeeCalculat
 C:\Users\pette\source\repos\cleancodeiths\Lab2\TollFeeCalculator\TollFeeCalculator\bin\Debug\net5.0\TollFeeCalculator.dll
 C:\Users\pette\source\repos\cleancodeiths\Lab2\TollFeeCalculator\TollFeeCalculator\bin\Debug\net5.0\ref\TollFeeCalculator.dll
 C:\Users\pette\source\repos\cleancodeiths\Lab2\TollFeeCalculator\TollFeeCalculator\bin\Debug\net5.0\TollFeeCalculator.pdb
+C:\Users\pette\source\repos\cleancodeiths\Lab2\TollFeeCalculator\TollFeeCalculator\bin\Debug\net5.0\Microsoft.Extensions.DependencyInjection.Abstractions.dll
+C:\Users\pette\source\repos\cleancodeiths\Lab2\TollFeeCalculator\TollFeeCalculator\obj\Debug\net5.0\TollFeeCalculator.csproj.CopyComplete
 C:\Users\pette\source\repos\cleancodeiths\Lab2\TollFeeCalculator\TollFeeCalculator\obj\Debug\net5.0\TollFeeCalculator.dll
 C:\Users\pette\source\repos\cleancodeiths\Lab2\TollFeeCalculator\TollFeeCalculator\obj\Debug\net5.0\ref\TollFeeCalculator.dll
 C:\Users\pette\source\repos\cleancodeiths\Lab2\TollFeeCalculator\TollFeeCalculator\obj\Debug\net5.0\TollFeeCalculator.pdb
 C:\Users\pette\source\repos\cleancodeiths\Lab2\TollFeeCalculator\TollFeeCalculator\obj\Debug\net5.0\TollFeeCalculator.genruntimeconfig.cache
-C:\Users\pette\source\repos\cleancodeiths\Lab2\TollFeeCalculator\TollFeeCalculator\bin\Debug\net5.0\Microsoft.Extensions.DependencyInjection.Abstractions.dll
-C:\Users\pette\source\repos\cleancodeiths\Lab2\TollFeeCalculator\TollFeeCalculator\obj\Debug\net5.0\TollFeeCalculator.csproj.CopyComplete
