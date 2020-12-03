@@ -115,5 +115,32 @@ namespace TollFeeCalculator.Tests
             //Assert
             sut._fee.Should().Be(CalculateTollFees.MaxTollFeeAmount);
         }
+
+        [TestMethod()]
+        public void If_startingInterval_and_dates_have_the_same_year_month_and_day_PassedTollSameDay_should_return_true()
+        {
+            //Arrange
+            var sut = new CalculateTollFees();
+            var date = new DateTime(2020, 4, 1).AddHours(7).AddMinutes(31);
+            var startingInterval = new DateTime(2020, 4, 1).AddHours(9).AddMinutes(31);
+
+            //Act
+            var actual = sut.PassedTollSameDay(date, startingInterval);
+            //Assert
+            actual.Should().Be(true);
+        }
+        [TestMethod()]
+        public void If_startingInterval_and_dates_does_not_have_the_same_year_month_and_day_PassedTollSameDay_should_return_true()
+        {
+            //Arrange
+            var sut = new CalculateTollFees();
+            var date = new DateTime(2020, 4, 1).AddHours(7).AddMinutes(31);
+            var startingInterval = new DateTime(2020, 4, 2).AddHours(9).AddMinutes(31);
+
+            //Act
+            var actual = sut.PassedTollSameDay(date, startingInterval);
+            //Assert
+            actual.Should().Be(false);
+        }
     }
 }

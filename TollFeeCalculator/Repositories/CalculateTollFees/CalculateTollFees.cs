@@ -19,30 +19,25 @@ namespace TollFeeCalculator.Repositories.CalculateTollFees
 
             foreach (var date in dates)
             {
-                if (!TollFree(date) && date != dates[0] ||
-                    !TollFree(date) && dates.Length == 1)
-                {
-                    //Skriv test
-                    if (PassedTollSameDay(dates, date))
-                    {
-                        _minutesBetweenTollStops = CalculateTimeBetweenTollStops(date, _startingInterval);
+                var validForFeeCharge = ValidForFee(dates, date);
 
-                        if (_minutesBetweenTollStops >= LimitToJustPayOneTollFee)
+                switch (validForFeeCharge)
+                {
+                    case true:
+                        if (PassedTollSameDay(date, _startingInterval))
                         {
-                            _fee += GetTollFeePrice(date.Hour, date.Minute);
+                            _minutesBetweenTollStops = CalculateTimeBetweenTollStops(date, _startingInterval);
+
+                            _fee += AmountAddedToFee(date, _minutesBetweenTollStops);
                         }
                         else
                         {
-                            _fee += Math.Max(GetTollFeePrice(date.Hour, date.Minute), GetTollFeePrice(_startingInterval.Hour, _startingInterval.Minute));
+                            _fee += GetTollFeePrice(date.Hour, date.Minute);
                         }
-
-                    }
-                    else
-                    {
-                        _fee += GetTollFeePrice(date.Hour, date.Minute);
-                    }
+                        break;
+                    default:
+                        break;
                 }
-
                 //Skriv test på starting interval
                 _startingInterval = SetStartingInterval(_startingInterval, date);
 
@@ -53,7 +48,29 @@ namespace TollFeeCalculator.Repositories.CalculateTollFees
             return _fee;
         }
 
-        private bool PassedTollSameDay(DateTime[] dates, DateTime date)
+        private int AmountAddedToFee(DateTime date, int _minutesBetweenTollStops)
+        {
+            if (_minutesBetweenTollStops >= LimitToJustPayOneTollFee)
+            {
+                return GetTollFeePrice(date.Hour, date.Minute);
+            }
+            else
+            {
+                return Math.Max(GetTollFeePrice(date.Hour, date.Minute), GetTollFeePrice(_startingInterval.Hour, _startingInterval.Minute));
+            }
+        }
+
+        private bool ValidForFee(DateTime[] dates, DateTime date)
+        {
+            if (!TollFree(date) && date != dates[0] ||
+                            !TollFree(date) && dates.Length == 1)
+            {
+                return true;
+            }
+            return false;
+        }
+
+        public bool PassedTollSameDay(DateTime date, DateTime _startingInterval)
         {
             if (date.Year == _startingInterval.Year &&
                 date.Month == _startingInterval.Month &&
