@@ -1,15 +1,16 @@
 ﻿using System;
-using System.Globalization;
 using System.Linq;
+using TollFeeCalculator.Repositories.CalculateTollFees;
+
 
 namespace TollFeeCalculator.Repositories.HandleInput
 {
-    public class HandleInput
+    public class HandleInput 
     {
-        private readonly CalculateTollFees.CalculateTollFees _calculateTollFees;
+        private readonly ICalculateTollFees _calculateTollFees;
         public DateTime[] dates;
 
-        public HandleInput(CalculateTollFees.CalculateTollFees calculateTollFees)
+        public HandleInput(ICalculateTollFees calculateTollFees)
         {
             _calculateTollFees = calculateTollFees;
         }
@@ -21,7 +22,7 @@ namespace TollFeeCalculator.Repositories.HandleInput
         }
 
         //Skriv Test på sort data 
-        private DateTime[] SortData(DateTime[] dates)
+        public DateTime[] SortData(DateTime[] dates)
         {
             return dates.OrderBy(x => x.Year).ToArray();
         }

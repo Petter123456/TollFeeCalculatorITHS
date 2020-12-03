@@ -7,14 +7,14 @@ using TollFeeCalculator.Repositories.HandleInput;
 namespace TollFeeCalculator.Tests
 {
     [TestClass()]
-    public class CalculateTollFeeTests
+    public class CalculateTollFeeTests 
     {
         [TestMethod()]
         public void ParseDates_Should_Always_Include_All_Input()
         {
             //Arrange
             var sut = new HandleInput(new CalculateTollFees());
-            var input = new string[2] {"2020-06-30 00:05", "2020-06-30 06:34"};
+            var input = new string[2] { "2020-06-30 00:05", "2020-06-30 06:34" };
             //Act
             var actual = sut.ParseDates(input);
             //Assert
@@ -34,7 +34,7 @@ namespace TollFeeCalculator.Tests
                 new DateTime(2020, 3, 7).AddHours(6).AddMinutes(15),
                 new DateTime(2020, 3, 6).AddHours(6).AddMinutes(15)
 
-            }; 
+            };
             //Act
             sut.ValidateToll(input);
             //Assert
@@ -52,7 +52,7 @@ namespace TollFeeCalculator.Tests
                 new DateTime(2020, 4, 1).AddHours(7).AddMinutes(59),
             };
             //Act
-            var actual = sut.ValidateToll(input); 
+            var actual = sut.ValidateToll(input);
             //Assert
             sut._minutesBetweenTollStops.Should().Be(60);
         }
@@ -130,7 +130,7 @@ namespace TollFeeCalculator.Tests
             actual.Should().Be(true);
         }
         [TestMethod()]
-        public void If_startingInterval_and_dates_does_not_have_the_same_year_month_and_day_PassedTollSameDay_should_return_true()
+        public void If_startingInterval_and_dates_does_not_have_the_same_year_month_and_day_PassedTollSameDay_should_return_false()
         {
             //Arrange
             var sut = new CalculateTollFees();
@@ -141,6 +141,33 @@ namespace TollFeeCalculator.Tests
             var actual = sut.PassedTollSameDay(date, startingInterval);
             //Assert
             actual.Should().Be(false);
+        }
+        [TestMethod()]
+        public void SetStartingInterval_should_Change_to_starTimeForCharge_if_startInterval_is_not_within_chargeble_hour_and_minutes()
+        {
+            //Arrange
+            var sut = new CalculateTollFees();
+            var date = new DateTime(2020, 4, 1).AddHours(7).AddMinutes(31);
+            var startingInterval = new DateTime(2020, 4, 2).AddHours(5).AddMinutes(0);
+
+            //Act
+            var actual = sut.SetStartingInterval(startingInterval, date);
+            //Assert
+            actual.Should().Be(CalculateTollFees.startTimeForCharge);
+        }
+
+        [TestMethod()]
+        public void SetStartingInterval_should_Change_to_date_if_startInterval_is_within_chargeble_hour_and_minutes()
+        {
+            //Arrange
+            var sut = new CalculateTollFees();
+            var date = new DateTime(2020, 4, 1).AddHours(7).AddMinutes(31);
+            var startingInterval = new DateTime(2020, 4, 2).AddHours(6).AddMinutes(42);
+
+            //Act
+            var actual = sut.SetStartingInterval(startingInterval, date);
+            //Assert
+            actual.Should().Be(date);
         }
     }
 }

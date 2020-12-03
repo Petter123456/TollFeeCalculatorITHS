@@ -1,12 +1,16 @@
 ﻿using System;
+using TollFeeCalculator.Repositories.TollFeePrices;
 
 namespace TollFeeCalculator.Repositories.CalculateTollFees
 {
-    public partial class CalculateTollFees
+    public class CalculateTollFees : TollFeesPrices, ICalculateTollFees
     {
         public int _minutesBetweenTollStops;
         public int _fee;
         private DateTime _startingInterval;
+        private bool validForFeeCharge;
+
+        public static DateTime startTimeForCharge { get; private set; }
 
         public int TotalFeeCost(DateTime[] dates)
         {
@@ -19,7 +23,7 @@ namespace TollFeeCalculator.Repositories.CalculateTollFees
 
             foreach (var date in dates)
             {
-                var validForFeeCharge = ValidForFee(dates, date);
+                validForFeeCharge = ValidForFee(dates, date);
 
                 switch (validForFeeCharge)
                 {
@@ -38,26 +42,12 @@ namespace TollFeeCalculator.Repositories.CalculateTollFees
                     default:
                         break;
                 }
-                //Skriv test på starting interval
                 _startingInterval = SetStartingInterval(_startingInterval, date);
 
-                //Skriv test på max belopp
                 if (MaxAmount(ref _fee)) break;
             }
 
             return _fee;
-        }
-
-        private int AmountAddedToFee(DateTime date, int _minutesBetweenTollStops)
-        {
-            if (_minutesBetweenTollStops >= LimitToJustPayOneTollFee)
-            {
-                return GetTollFeePrice(date.Hour, date.Minute);
-            }
-            else
-            {
-                return Math.Max(GetTollFeePrice(date.Hour, date.Minute), GetTollFeePrice(_startingInterval.Hour, _startingInterval.Minute));
-            }
         }
 
         private bool ValidForFee(DateTime[] dates, DateTime date)
@@ -82,23 +72,35 @@ namespace TollFeeCalculator.Repositories.CalculateTollFees
 
             return false;
         }
-
-        private static bool MaxAmount(ref int fee)
+        public int CalculateTimeBetweenTollStops(DateTime date, DateTime startingInterval)
         {
-            if (fee > MaxTollFeeAmount)
-            {
-                fee = MaxTollFeeAmount;
-                return true;
-            }
-
-            return false;
+            return ((date - startingInterval).Hours * HoursConversionToMinutesRate) + (date - startingInterval).Minutes;
         }
 
-        private static DateTime SetStartingInterval(DateTime startingInterval, DateTime date)
+        private int AmountAddedToFee(DateTime date, int _minutesBetweenTollStops)
+        {
+            if (_minutesBetweenTollStops >= LimitToJustPayOneTollFee)
+            {
+                return GetTollFeePrice(date.Hour, date.Minute);
+            }
+            else
+            {
+                return Math.Max(GetTollFeePrice(date.Hour, date.Minute), GetTollFeePrice(_startingInterval.Hour, _startingInterval.Minute));
+            }
+        }
+
+        public DateTime SetStartingInterval(DateTime startingInterval, DateTime date)
         {
             if (startingInterval.Hour <= MaxNoneBilledHour && startingInterval.Minute <= MaxNoneBilledMinutes)
             {
-                startingInterval = new DateTime(startingInterval.Year, startingInterval.Month, startingInterval.Day).AddHours(StartBilledHour).AddMinutes(StartBilledMinutes);
+                startTimeForCharge = new DateTime(
+                    startingInterval.Year, 
+                    startingInterval.Month, 
+                    startingInterval.Day)
+                    .AddHours(StartBilledHour)
+                    .AddMinutes(StartBilledMinutes);
+
+                startingInterval = startTimeForCharge;
             }
             else
             {
@@ -108,47 +110,15 @@ namespace TollFeeCalculator.Repositories.CalculateTollFees
             return startingInterval;
         }
 
-        public int CalculateTimeBetweenTollStops(DateTime date, DateTime startingInterval)
+        public static bool MaxAmount(ref int fee)
         {
-            return ((date - startingInterval).Hours * HoursConversionToMinutesRate) + (date - startingInterval).Minutes;
-        }
-
-        public int GetTollFeePrice(int hour, int minute)
-        {
-            if (hour >= (int)TollFeeIntervalOne.MinHour &&
-                hour <= (int)TollFeeIntervalOne.MaxHour &&
-                minute >= (int)TollFeeIntervalOne.MinMinutes &&
-                minute <= (int)TollFeeIntervalOne.MaxMinutes)
+            if (fee > MaxTollFeeAmount)
             {
-                return (int)Price.MinFee;
+                fee = MaxTollFeeAmount;
+                return true;
             }
 
-            switch (hour)
-            {
-                case (int)TollFeeIntervalTwo.Hour when minute >= (int)TollFeeIntervalTwo.MinMinutes && minute <= (int)TollFeeIntervalTwo.MaxMinutes:
-                    return (int)Price.MinFee;
-                case (int)TollFeeIntervalThree.Hour when minute >= (int)TollFeeIntervalThree.MinMinutes && minute <= (int)TollFeeIntervalThree.MaxMinutes:
-                    return (int)Price.MidFee;
-                case (int)TollFeeIntervalFour.Hour when minute >= (int)TollFeeIntervalFour.MinMinutes && minute <= (int)TollFeeIntervalFour.MaxMinutes:
-                    return (int)Price.MaxFee;
-                case (int)TollFeeIntervalFive.Hour when minute >= (int)TollFeeIntervalFive.MinMinutes && minute <= (int)TollFeeIntervalFive.MaxMinutes:
-                    return (int)Price.MidFee;
-            }
-
-            switch (hour)
-            {
-                case (int)TollFeeIntervalSix.Hour when minute >= (int)TollFeeIntervalSix.MinMinutes && minute <= (int)TollFeeIntervalSix.MinMinutes:
-                    return (int)Price.MidFee;
-                case (int)TollFeeIntervalSeven.MinHour when minute >= (int)TollFeeIntervalSeven.MinMinutes:
-                case (int)TollFeeIntervalSeven.MaxHour when minute <= (int)TollFeeIntervalSeven.MaxMinutes:
-                    return (int)Price.MaxFee;
-                case (int)TollFeeIntervalEight.Hour when minute >= (int)TollFeeIntervalEight.MinMinutes && minute <= (int)TollFeeIntervalEight.MaxMinutes:
-                    return (int)Price.MidFee;
-                case (int)TollFeeIntervalNine.Hour when minute >= (int)TollFeeIntervalNine.MinMinutes && minute <= (int)TollFeeIntervalNine.MaxMinutes:
-                    return (int)Price.MinFee;
-                default:
-                    return (int)Price.Free;
-            }
+            return false;
         }
 
         public bool TollFree(DateTime date)

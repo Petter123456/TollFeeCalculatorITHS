@@ -1,6 +1,6 @@
-﻿namespace TollFeeCalculator.Repositories.CalculateTollFees
+﻿namespace TollFeeCalculator.Data
 {
-    public partial class CalculateTollFees
+    public class ConstantValues
     {
         public const int LimitToJustPayOneTollFee = 60;
         public const int MaxTollFeeAmount = 60;
