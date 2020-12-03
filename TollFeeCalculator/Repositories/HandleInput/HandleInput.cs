@@ -21,10 +21,9 @@ namespace TollFeeCalculator.Repositories.HandleInput
             return _calculateTollFees.TotalFeeCost(dates);
         }
 
-        //Skriv Test på sort data 
         public DateTime[] SortData(DateTime[] dates)
         {
-            return dates.OrderBy(x => x.Year).ToArray();
+            return dates.OrderBy(x => x).ToArray();          
         }
 
         public DateTime[] PrepareData(string inputFile)

@@ -3,11 +3,15 @@ using System;
 using FluentAssertions;
 using TollFeeCalculator.Repositories.CalculateTollFees;
 using TollFeeCalculator.Repositories.HandleInput;
+using System.Linq;
+using TollFeeCalculator.Repositories.TollFeePrices;
+using static TollFeeCalculator.Data.ConstantValues;
+using System.Collections.Generic;
 
 namespace TollFeeCalculator.Tests
 {
     [TestClass()]
-    public class CalculateTollFeeTests 
+    public class CalculateTollFeeTests
     {
         [TestMethod()]
         public void ParseDates_Should_Always_Include_All_Input()
@@ -168,6 +172,49 @@ namespace TollFeeCalculator.Tests
             var actual = sut.SetStartingInterval(startingInterval, date);
             //Assert
             actual.Should().Be(date);
+        }
+
+        [TestMethod()]
+        public void SortData_should_sort_data_in_order()
+        {
+            //Arrange
+            var sut = new HandleInput(new CalculateTollFees());
+            var input = new DateTime[]
+            {
+                new DateTime(2020, 5, 1).AddHours(9).AddMinutes(31),
+                new DateTime(2020, 4, 1).AddHours(7).AddMinutes(31),
+                new DateTime(2021, 4, 1).AddHours(10).AddMinutes(31),
+                new DateTime(2020, 4, 2).AddHours(7).AddMinutes(31),
+            };
+            var sorted = input.OrderBy(x => x).ToArray();
+            //Act
+            var actual = sut.SortData(input);
+            //Assert
+            actual[0].Should().Be(sorted[0]);
+            actual[1].Should().Be(sorted[1]);
+            actual[2].Should().Be(sorted[2]);
+            actual[3].Should().Be(sorted[3]);
+        }
+
+        [TestMethod()]
+        public void GetTollFeePrices_should_always_return_a_ConstantPrice()
+        {
+            //Arrange
+            var sut = new TollFeesPrices();
+            int hour = 22;
+            int minute = 30;
+            var prices = new List<int>(){
+               (int) Price.Free,
+               (int) Price.MinFee,
+               (int) Price.MidFee,
+               (int) Price.MaxFee
+            };
+            
+            //Act
+            var actual = sut.GetTollFeePrice(hour, minute);
+            bool result = prices.Any(val => val == actual);
+            //Assert
+            result.Should().BeTrue(); 
         }
     }
 }

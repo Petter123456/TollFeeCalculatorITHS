@@ -6,7 +6,8 @@ namespace TollFeeCalculator
 {
     public class Program
     {
-        private const string File = "../../../../testData.txt";
+        private const string File = "../../../../Data/testData.txt";
+
         private static readonly string Path = Environment.CurrentDirectory + File;
 
         public static void Main()
