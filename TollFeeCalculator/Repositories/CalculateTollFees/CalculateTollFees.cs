@@ -6,7 +6,9 @@ namespace TollFeeCalculator.Repositories.CalculateTollFees
     public class CalculateTollFees : TollFeesPrices, ICalculateTollFees
     {
         public int _minutesBetweenTollStops;
-        public int _fee;
+        public int totalFee;
+        public int dailyFee;
+
         private DateTime _startingInterval;
         private bool validForFeeCharge;
 
@@ -32,25 +34,25 @@ namespace TollFeeCalculator.Repositories.CalculateTollFees
                         {
                             _minutesBetweenTollStops = CalculateTimeBetweenTollStops(date, _startingInterval);
 
-                            _fee += AmountAddedToFee(date, _minutesBetweenTollStops);
+                            dailyFee += AmountAddedTDailyFee(date, _minutesBetweenTollStops);
+
+                            MaxDailyAmount(dailyFee);                             
                         }
                         else
                         {
-                            _fee += GetTollFeePrice(date.Hour, date.Minute);
+                            totalFee += GetTollFeePrice(date.Hour, date.Minute);
                         }
                         break;
                     default:
                         break;
                 }
                 _startingInterval = SetStartingInterval(_startingInterval, date);
-
-                if (MaxAmount(ref _fee)) break;
             }
 
-            return _fee;
+            return totalFee + dailyFee;
         }
 
-        private bool ValidForFee(DateTime[] dates, DateTime date)
+        public bool ValidForFee(DateTime[] dates, DateTime date)
         {
             if (!TollFree(date) && date != dates[0] ||
                             !TollFree(date) && dates.Length == 1)
@@ -77,7 +79,7 @@ namespace TollFeeCalculator.Repositories.CalculateTollFees
             return ((date - startingInterval).Hours * HoursConversionToMinutesRate) + (date - startingInterval).Minutes;
         }
 
-        private int AmountAddedToFee(DateTime date, int _minutesBetweenTollStops)
+        public int AmountAddedTDailyFee(DateTime date, int _minutesBetweenTollStops)
         {
             if (_minutesBetweenTollStops >= LimitToJustPayOneTollFee)
             {
@@ -110,15 +112,12 @@ namespace TollFeeCalculator.Repositories.CalculateTollFees
             return startingInterval;
         }
 
-        public static bool MaxAmount(ref int fee)
+        public void MaxDailyAmount(int fee)
         {
-            if (fee > MaxTollFeeAmount)
+            if (fee >= MaxDailyTollFeeAmount)
             {
-                fee = MaxTollFeeAmount;
-                return true;
+                dailyFee = MaxDailyTollFeeAmount;
             }
-
-            return false;
         }
 
         public bool TollFree(DateTime date)

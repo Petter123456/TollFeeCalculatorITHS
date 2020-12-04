@@ -3,7 +3,7 @@
     public class ConstantValues
     {
         public const int LimitToJustPayOneTollFee = 60;
-        public const int MaxTollFeeAmount = 60;
+        public const int MaxDailyTollFeeAmount = 60;
         public const int MaxNoneBilledHour = 6;
         public const int MaxNoneBilledMinutes = 29;
         public const int StartBilledHour = 6;
@@ -74,7 +74,7 @@
         {
             Hour = 17,
             MaxMinutes = 59,
-            MinMinutes = 30
+            MinMinutes = 0
         }
 
         public enum TollFeeIntervalNine

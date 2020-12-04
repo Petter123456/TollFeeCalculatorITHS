@@ -30,7 +30,7 @@ namespace TollFeeCalculator.Repositories.HandleInput
         {
             string indata = System.IO.File.ReadAllText(inputFile);
             string[] dateStrings = SplitInData(indata);
-            return ParseDates(dateStrings);
+           return ParseDates(dateStrings);
         }
 
         public string[] SplitInData(string indata)
@@ -44,7 +44,14 @@ namespace TollFeeCalculator.Repositories.HandleInput
 
             for (int i = 0; i < dates.Length; i++)
             {
-                dates[i] = DateTime.Parse(dateStrings[i]);
+                try
+                {
+                    dates[i] = DateTime.Parse(dateStrings[i]);
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine($"Invalid input data, please check your data: \r\n \r\n {e} \r\n \r\n");
+                }
             }
 
             return dates;

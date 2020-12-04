@@ -28,7 +28,7 @@ namespace TollFeeCalculator.Repositories.TollFeePrices
 
             switch (hour)
             {
-                case (int)TollFeeIntervalSix.Hour when minute >= (int)TollFeeIntervalSix.MinMinutes && minute <= (int)TollFeeIntervalSix.MinMinutes:
+                case (int)TollFeeIntervalSix.Hour when minute >= (int)TollFeeIntervalSix.MinMinutes && minute <= (int)TollFeeIntervalSix.MaxMinutes:
                     return (int)Price.MidFee;
                 case (int)TollFeeIntervalSeven.MinHour when minute >= (int)TollFeeIntervalSeven.MinMinutes:
                 case (int)TollFeeIntervalSeven.MaxHour when minute <= (int)TollFeeIntervalSeven.MaxMinutes:

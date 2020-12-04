@@ -42,7 +42,7 @@ namespace TollFeeCalculator.Tests
             //Act
             sut.ValidateToll(input);
             //Assert
-            sut._fee.Should().Be(0);
+            sut.totalFee.Should().Be(0);
         }
 
         [TestMethod()]
@@ -75,7 +75,7 @@ namespace TollFeeCalculator.Tests
             //Act
             var actual = sut.ValidateToll(input);
             //Assert
-            sut._fee.Should().Be((int)fee);
+            sut.dailyFee.Should().Be((int)fee);
         }
 
         [TestMethod()]
@@ -91,7 +91,7 @@ namespace TollFeeCalculator.Tests
             //Act
             var actual = sut.ValidateToll(input);
             //Assert
-            sut._fee.Should().Be((int)fee);
+            sut.dailyFee.Should().Be((int)fee);
         }
         [TestMethod()]
         public void If__fee_is_equal_or_greater_than_Max_Amount__fee_should_be_equal_to_max_amount()
@@ -117,7 +117,7 @@ namespace TollFeeCalculator.Tests
             //Act
             var actual = sut.ValidateToll(input);
             //Assert
-            sut._fee.Should().Be(CalculateTollFees.MaxTollFeeAmount);
+            sut.dailyFee.Should().Be(CalculateTollFees.MaxDailyTollFeeAmount);
         }
 
         [TestMethod()]
